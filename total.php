@@ -5,11 +5,10 @@ Chamada periodo de gastos
 Params GET
 start=1556769600 'data inicio del filtro
 end=1557889200 'data fin del filtro
-group=month 'month o day para el retorno
+type=total o category
 
 url ejemplo:
-http://localhost/gastoxPentaho/rest.php?start=1556769600&end=1557889200&group=month
-
+http://localhost/gastoxServices.git/total.php?start=1556769600&end=1557889200&type=total
 
 Docs:
 https://firebase-php.readthedocs.io/en/1.2.2/overview.html
@@ -30,19 +29,19 @@ usort($result, "comparator");
 $fecha_aux = '';
 $total = 0;
 $array = [];
+$arrayCategorias = [];
 $start = $_GET['start'];
 $end = $_GET['end'];
-$group = $_GET['group']; // day or month
+$dias = 0;
+$type = $_GET['type']; // total || category
 
 foreach($result as $key=>$r){
 
-	if($group == 'month')
-		$d_format = "Y-m";
-	else
-		$d_format = "Y-m-d";
-
+	$d_format = "Y-m-d";
 	$fecha = $r['fecha'];
 	$precio = floatval($r['precio']);
+	$categoria = htmlentities($r['categoria']);
+
 
 	if( $fecha >= $start && $fecha <= $end){
 
@@ -50,28 +49,51 @@ foreach($result as $key=>$r){
 
 		if($fecha_aux != $fecha){
 
-			if($fecha_aux != ''){
-				$object = new StdClass;
-				$object->fecha = $fecha_aux;
-				$object->precio = $total;
-				array_push($array , $object);		
-			}
-
-			$total = $precio;
+			if($fecha_aux != '')
+				$dias++;	
+		
 			$fecha_aux = $fecha;
 			
-		}else{
-			$total += $precio;
 		}
 
+		$total += $precio;
+
+		// categorias
+		if(!array_key_exists($categoria, $arrayCategorias)){
+			$arrayCategorias[$categoria] = 0;
+		}
+		$arrayCategorias[$categoria] += $precio;		
 	}
 
 }
 
-$object = new StdClass;
-$object->fecha = $fecha_aux;
-$object->precio = $total;
-array_push($array , $object);		
+
+
+if($type == 'total'){
+	// totales
+	$total += $precio;
+	$dias++;
+	$promedioDia = $total / $dias;
+
+	$return = new StdClass;
+	$return->total = round($total,2);
+	$return->dias = $dias;
+	$return->promedioDia = round($promedioDia,2);
+	array_push($array , $return);	
+
+}else{
+	// categorias format json
+	foreach($arrayCategorias as $key=>$v){
+		$return = new StdClass;
+		$return->categoria = $key;
+		$return->precio = $v;
+		array_push($array , $return);	
+	}
+
+}
+
+
+//array_push($array , $arrayCategorias);
 
 /* debugg trae todo
 print_r($result);

@@ -1,25 +1,24 @@
 <?php
-
-require __DIR__.'/vendor/autoload.php';
-
-use Kreait\Firebase\Configuration;
-use Kreait\Firebase\Firebase;
-
-$config = new Configuration();
 /*
-https://firebase-php.readthedocs.io/en/1.2.2/overview.html
 
+Chamada periodo de gastos
+Params GET
+start=1556769600 'data inicio del filtro
+end=1557889200 'data fin del filtro
+group=month 'month o day para el retorno
+
+url ejemplo:
+http://localhost/gastoxPentaho/rest.php?start=1556769600&end=1557889200&group=month
+
+
+Docs:
+https://firebase-php.readthedocs.io/en/1.2.2/overview.html
 para pegar o gastoxteste-firebase-adminsdk-rqqgr-8c2e07e33b.json com as configuracoes
 https://firebase.google.com/docs/admin/setup#add_firebase_to_your_app
 
 */
-$config->setAuthConfigFile(__DIR__.'/gastoxteste-firebase-adminsdk-rqqgr-8c2e07e33b.json');
 
-$firebase = new Firebase('https://gastoxteste.firebaseio.com', $config);
-
-$reference = $firebase->getReference('/gastox/datos/gastos');
-
-$result = $reference->getData();
+include 'firebase.php';
 
 //print_r($result);
 
