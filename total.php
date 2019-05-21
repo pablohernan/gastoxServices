@@ -40,7 +40,7 @@ foreach($result as $key=>$r){
 	$d_format = "Y-m-d";
 	$fecha = $r['fecha'];
 	$precio = floatval($r['precio']);
-	$categoria = htmlentities($r['categoria']);
+	$categoria = $r['categoria'];
 
 
 	if( $fecha >= $start && $fecha <= $end){
@@ -104,6 +104,6 @@ echo "
 ";
 */
 header('Content-type: application/json');
-echo json_encode($array);
+echo json_encode($array,JSON_UNESCAPED_UNICODE);
 
 ?>
