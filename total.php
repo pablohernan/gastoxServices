@@ -18,11 +18,10 @@ https://firebase.google.com/docs/admin/setup#add_firebase_to_your_app
 */
 
 include 'firebase.php';
+include 'includes/array.php';
+include 'includes/date.php';
 
 // ordena o array por fecha
-function comparator($a, $b){
-    return strcmp($a['fecha'], $b['fecha']);
-}
 usort($result, "comparator");
 //
 
@@ -72,7 +71,7 @@ foreach($result as $key=>$r){
 if($type == 'total'){
 	// totales
 	$total += $precio;
-	$dias++;
+	$dias = diasEntre($start,$end);
 	$promedioDia = $total / $dias;
 
 	$return = new StdClass;

@@ -19,11 +19,9 @@ https://firebase.google.com/docs/admin/setup#add_firebase_to_your_app
 */
 
 include 'firebase.php';
+include 'includes/array.php';
 
 // ordena o array por fecha
-function comparator($a, $b){
-    return strcmp($a['fecha'], $b['fecha']);
-}
 usort($result, "comparator");
 //
 
@@ -32,6 +30,7 @@ $total = 0;
 $array = [];
 $start = $_GET['start'];
 $end = $_GET['end'];
+$end = strtotime('+6 hour',(int)$end); // fix data fin para mostrar el ultimo dia
 $group = $_GET['group']; // day or month
 
 foreach($result as $key=>$r){
@@ -81,7 +80,9 @@ echo "
 
 ";
 */
+$array = fixDateArray($array,$d_format);
+
 header('Content-type: application/json');
 echo json_encode($array,JSON_UNESCAPED_UNICODE);
-
+/**/
 ?>
