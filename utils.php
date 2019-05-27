@@ -24,8 +24,25 @@ include 'firebase.php';
 
 foreach($result as $key=>$r){
 
-	$des = $r['descripcion'];
+	//$des = $r['descripcion'];
+	$categoria = $r['categoria'];
 
+
+
+	if( $categoria == 'Alimentaci�n casa'){
+		echo $key.':'.$categoria.'
+		';
+		$r['categoria'] = 'Alimentación casa';
+		/*
+		$firebase->update([
+		    $key => $r
+		], '/gastox/datos/gastos');		
+		*/
+	}
+
+
+
+	/*
 	if(!array_key_exists('metodo', $r)){
 
 			$val = 'Efectivo';
@@ -36,7 +53,7 @@ foreach($result as $key=>$r){
 			//cria uma key nova "metodo"
 		  $r['metodo'] = $val;
 
-
+	/*
 	// remove
 	// $firebase->delete('/gastox/datos/gastos/'.$key);
 
@@ -46,7 +63,7 @@ foreach($result as $key=>$r){
 			    $key => $r
 			], '/gastox/datos/gastos');
 	*/
-	}
+	//}
 
 
 }

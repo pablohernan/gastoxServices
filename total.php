@@ -27,6 +27,8 @@ usort($result, "comparator");
 
 $fecha_aux = '';
 $total = 0;
+$totalTarjeta = 0;
+$totalEfectivo = 0;
 $array = [];
 $arrayCategorias = [];
 $start = $_GET['start'];
@@ -40,6 +42,7 @@ foreach($result as $key=>$r){
 	$fecha = $r['fecha'];
 	$precio = floatval($r['precio']);
 	$categoria = $r['categoria'];
+	$metodo = $r['metodo'];
 
 
 	if( $fecha >= $start && $fecha <= $end){
@@ -57,6 +60,19 @@ foreach($result as $key=>$r){
 
 		$total += $precio;
 
+		// metodo
+		if($metodo == 'Tarjeta'){
+			$totalTarjeta += $precio;
+		}else{
+			$totalEfectivo += $precio;	
+		}
+
+		if($type == 'description'){
+			$r['precio'] = floatval($r['precio']);
+			$r['fecha'] = date($d_format, $r['fecha']);
+			array_push($array , $r);	
+		}
+
 		// categorias
 		if(!array_key_exists($categoria, $arrayCategorias)){
 			$arrayCategorias[$categoria] = 0;
@@ -67,8 +83,13 @@ foreach($result as $key=>$r){
 }
 
 
+if($type == 'description'){
+	
+	$r['precio'] = floatval($r['precio']);
+	$r['fecha'] = date($d_format, $r['fecha']);
+	array_push($array , $r);	
 
-if($type == 'total'){
+}elseif($type == 'total'){
 	// totales
 	$total += $precio;
 	$dias = diasEntre($start,$end);
@@ -79,6 +100,26 @@ if($type == 'total'){
 	$return->dias = $dias;
 	$return->promedioDia = round($promedioDia,2);
 	array_push($array , $return);	
+
+}elseif($type == 'method'){
+	// metodo
+	if($metodo == 'Tarjeta'){
+		$totalTarjeta += $precio;
+
+	}else{
+		$totalEfectivo += $precio;	
+
+	}
+
+	$return = new StdClass;
+	$return->metodo = 'Tarjeta';
+	$return->total = round($totalTarjeta,2);
+	array_push($array , $return);		
+
+	$return = new StdClass;
+	$return->metodo = 'Efectivo';
+	$return->total = round($totalEfectivo,2);
+	array_push($array , $return);		
 
 }else{
 	// categorias format json
