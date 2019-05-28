@@ -49,13 +49,11 @@ foreach($result as $key=>$r){
 
 		$fecha = date($d_format, $fecha);
 
+		//cuanto dias
 		if($fecha_aux != $fecha){
-
 			if($fecha_aux != '')
 				$dias++;	
-		
-			$fecha_aux = $fecha;
-			
+			$fecha_aux = $fecha;	
 		}
 
 		$total += $precio;
@@ -67,6 +65,8 @@ foreach($result as $key=>$r){
 			$totalEfectivo += $precio;	
 		}
 
+
+
 		if($type == 'description'){
 			$r['precio'] = floatval($r['precio']);
 			$r['fecha'] = date($d_format, $r['fecha']);
@@ -77,21 +77,26 @@ foreach($result as $key=>$r){
 		if(!array_key_exists($categoria, $arrayCategorias)){
 			$arrayCategorias[$categoria] = 0;
 		}
-		$arrayCategorias[$categoria] += $precio;		
+		$arrayCategorias[$categoria] += $precio;	
+
+/*
+		echo '
+		precio:'.$precio.'
+		total:'.$total.'
+		totalTarjeta:'.$totalTarjeta.'
+		totalEfectivo:'.$totalEfectivo.'
+
+		';
+*/
 	}
 
 }
 
 
-if($type == 'description'){
-	
-	$r['precio'] = floatval($r['precio']);
-	$r['fecha'] = date($d_format, $r['fecha']);
-	array_push($array , $r);	
 
-}elseif($type == 'total'){
+
+if($type == 'total'){
 	// totales
-	$total += $precio;
 	$dias = diasEntre($start,$end);
 	$promedioDia = $total / $dias;
 
@@ -102,15 +107,8 @@ if($type == 'description'){
 	array_push($array , $return);	
 
 }elseif($type == 'method'){
+
 	// metodo
-	if($metodo == 'Tarjeta'){
-		$totalTarjeta += $precio;
-
-	}else{
-		$totalEfectivo += $precio;	
-
-	}
-
 	$return = new StdClass;
 	$return->metodo = 'Tarjeta';
 	$return->total = round($totalTarjeta,2);
@@ -121,13 +119,15 @@ if($type == 'description'){
 	$return->total = round($totalEfectivo,2);
 	array_push($array , $return);		
 
-}else{
+}elseif($type == 'category'){
+
 	// categorias format json
 	foreach($arrayCategorias as $key=>$v){
 		$return = new StdClass;
 		$return->categoria = $key;
 		$return->precio = $v;
 		array_push($array , $return);	
+
 	}
 
 }
